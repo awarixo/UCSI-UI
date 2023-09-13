@@ -1,4 +1,4 @@
-## LangChain Chat - Next.js
+## UCSI-UI - Next.js
 
 ## Getting started 🚀
 
