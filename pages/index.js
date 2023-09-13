@@ -56,7 +56,7 @@ export default function Home() {
 
     // Send user question and history to API 13.229.223.90
     // http://127.0.0.1:5050/api/chat
-    const response = await fetch("https://54.255.155.121:5050/api/chat", {
+    const response = await fetch("http://54.255.155.121:5050/api/chat", {
       method: "POST",
       headers: {
           "Content-Type": "application/json",
@@ -126,7 +126,7 @@ export default function Home() {
             // The latest message sent by the user will be animated while waiting for a response
               <div key = {index} className = {message.type === "userMessage" && loading && index === messages.length - 1  ? styles.usermessagewaiting : message.type === "apiMessage" ? styles.apimessage : styles.usermessage}>
                 {/* Display the correct icon depending on the message type */}
-                {message.type === "apiMessage" ? <Image src = "/utpicon.png" alt = "AI" width = "30" height = "auto" className = {styles.boticon} priority = {true} /> : <Image src = "/usericon.png" alt = "Me" width = "30" height = "30" className = {styles.usericon} priority = {true} />}
+                {message.type === "apiMessage" ? <Image src = "/utpicon.png" alt = "AI" width = "30" height = "30" className = {styles.boticon} priority = {true} /> : <Image src = "/usericon.png" alt = "Me" width = "30" height = "30" className = {styles.usericon} priority = {true} />}
               <div className = {styles.markdownanswer}>
                 {/* Messages are being rendered in Markdown format */}
                 <ReactMarkdown linkTarget = {"_blank"}>{message.message}</ReactMarkdown>
