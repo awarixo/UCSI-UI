@@ -56,7 +56,7 @@ export default function Home() {
 
     // Send user question and history to API 13.229.223.90
     // http://127.0.0.1:5050/api/chat
-    const response = await fetch("http://54.255.155.121:5050/api/chat", {
+    const response = await fetch("http://54.255.155.121:443/api/chat", {
       method: "POST",
       headers: {
           "Content-Type": "application/json",
