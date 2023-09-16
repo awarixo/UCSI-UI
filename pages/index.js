@@ -54,9 +54,9 @@ export default function Home() {
     }); 
     console.log('user: ', userInput)
 
-    // Send user question and history to API 13.229.223.90
+    // Send user question and history to API http://Docker-chatbot-load-balancer-383792909.ap-southeast-1.elb.amazonaws.com 
     // http://127.0.0.1:5050/api/chat
-    const response = await fetch("http://54.255.155.121:443/api/chat", {
+    const response = await fetch("https://docker-chatbot-load-balancer-383792909.ap-southeast-1.elb.amazonaws.com/", {
       method: "POST",
       headers: {
           "Content-Type": "application/json",
