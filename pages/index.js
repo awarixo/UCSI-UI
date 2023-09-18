@@ -107,11 +107,11 @@ export default function Home() {
         <title>UCSI</title>
         <meta name="description" content="UTP UCS-Interactive" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/utpicon.png" />
+        <link rel="icon" href="/utpicon.png"/>
       </Head>
     <div className={styles.topnav}>
       <div className = {styles.navlogo}>
-        <a href="/" className = {styles.homebutton}><img src= "/utplogo.svg"></img>UCSI</a>
+        <a href="/" className = {styles.homebutton}><img src= "/utplogo.svg" width = "100"></img>UCSI</a>
       </div>
     <div className = {styles.navlinks}>
     <a href="https://ucs.utp.edu.my/knowledgebase/" target="_blank">Knowledge base</a>
