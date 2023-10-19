@@ -55,10 +55,10 @@ export default function Home() {
     console.log('user: ', userInput)
 
     // Send user question and history to API http://Docker-chatbot-load-balancer-383792909.ap-southeast-1.elb.amazonaws.com 
-    // http://127.0.0.1:5050/api/chat
+    // http://127.0.0.1:5050/
     // https://dockerchatbot.ucsiapp.com
     async function fetchData() {
-      const response = await fetch("http://127.0.0.1:5050/", {
+      const response = await fetch("https://dockerchatbot.ucsiapp.com", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
