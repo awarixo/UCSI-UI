@@ -63,7 +63,7 @@ export default function Home() {
       // Reset user input
       setUserInput("");
       setLoading(true);
-      const response = await fetch("http://127.0.0.1:5050/", {
+      const response = await fetch("https://dockerchatbot.ucsiapp.com", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
