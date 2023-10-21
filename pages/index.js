@@ -46,38 +46,37 @@ export default function Home() {
       return;
     }
 
-    setLoading(true);
+
     setMessages((prevMessages) => [...prevMessages, { "message": userInput, "type": "userMessage" }]);
     
     messages.forEach((message, index) => {
-      console.log(`Message ${index + 1}: ${message.message}, Type: ${message.type}`);
+      // console.log(`Message ${index + 1}: ${message.message}, Type: ${message.type}`);
+      console.log(`Loading: ${loading} Index ${index}: ${messages.length - 1}, Type: ${message.type}`);
     }); 
     console.log('user: ', userInput)
+    
 
     // Send user question and history to API http://Docker-chatbot-load-balancer-383792909.ap-southeast-1.elb.amazonaws.com 
     // http://127.0.0.1:5050/
     // https://dockerchatbot.ucsiapp.com
     async function fetchData() {
-      const response = await fetch("https://dockerchatbot.ucsiapp.com", {
+      // Reset user input
+      setUserInput("");
+      setLoading(true);
+      const response = await fetch("http://127.0.0.1:5050/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({ question: userInput, messages: messages}),
       });
-
-
-
+      console.log(`loading: ${loading}`)
 
       if (!response.ok) {
         handleError();
         return;
     }
 
-    // Reset user input
-    setUserInput("");
-    // let sentence = "I'm here";
-     // Read a chunk from the stream
     
     let temp_counter = 0;
     const reader = response.body.getReader(); //Binary text reader
@@ -88,13 +87,6 @@ export default function Home() {
 
       const { value, done } = await reader.read();
       const decodedChunk = decoder.decode(value);
-
-        // Log the chunk to the console
-        // sentence += decodedChunk + " "
-        
-
-        // If the stream is done, close the reader and return
-        // if (decodedChunk === "[DONE]") {
           if (done) {
           temp_counter += 1
           if (temp_counter === 1){
@@ -115,6 +107,8 @@ export default function Home() {
           if (newMessages[newMessages.length - 1].type === "apiMessage") {
             // Append the chunk to the last message
             newMessages[newMessages.length - 1].message = decodedChunk;
+            
+            
           } else {
             // Create a new message with the chunk
             newMessages.push({
@@ -136,54 +130,9 @@ export default function Home() {
       // Call the function to start reading and logging
       readAndLogChunks();
       };
-      fetchData()
-      
-    // const decoder = new TextDecoder("utf-8");
-    // // const chunck = await reader.read(); //Binary text reader
-    // const chunck = await reader; //Binary text reader
-    // const {done, value} = chunck
-    // var stream_done = false
-    
-    // console.log("Stream started")
-
-    // while(stream_done === false){
-    //     // const chunck = await reader.read(); //Binary text reader
-    //     const chunck = await reader; //Binary text reader
-    //     const {done, value} = chunck
-    //     if (done===true){
-    //         break;
-    //     }
-    //     // sentence += value + " "
-    //     console.log(chunck)
-    //     if (value === "[DONE]"){
-    //         stream_done = true
-    //         console.log("Stream closed")
-    //     }
-    //     console.log("Stream closed")
-
-        // console.log(value)
-        // const decodedChunk = decoder.decode(value); 
-        // const lines = decodedChunk.split("\n") //The response is now a list
-        // const parsedLines = lines.map((line) => 
-        // line.replace(/^data: /,"").trim()    //Regular expression to remove "data: " and trim white spaces
-        // ).filter(line => line !== "" && line !== "[DONE]"     // Remove empty strings
-        // ).map((line) => JSON.parse(line));
-        
-
-        // console.log(parsedLines)
-
-    // }
-    // const data = await response.json();
-
-    // if (sentence === "Unauthorized") {
-    //   handleError();
-    //   return;
-    // }
-
-    // setMessages((prevMessages) => [...prevMessages, { "message": sentence, "type": "apiMessage" }]);
-    setLoading(false);
-    // sentence = "";
-    
+      await fetchData()
+      setLoading(false);
+       
   };
 
   // Prevent blank submissions and allow for multiline input
@@ -227,7 +176,7 @@ export default function Home() {
         {messages.map((message, index) => {
           return (
             // The latest message sent by the user will be animated while waiting for a response
-              <div key = {index} className = {message.type === "userMessage" && loading && index === messages.length  ? styles.usermessagewaiting : message.type === "apiMessage" ? styles.apimessage : styles.usermessage}>
+              <div key = {index} className = {message.type === "userMessage" && loading && index === messages.length - 1 ? styles.usermessagewaiting : message.type === "apiMessage" ? styles.apimessage : styles.usermessage}>
                 {/* Display the correct icon depending on the message type */}
                 {message.type === "apiMessage" ? <Image src = "/utpicon.png" alt = "AI" width = "30" height = "30" className = {styles.boticon} priority = {true} /> : <Image src = "/usericon.png" alt = "Me" width = "30" height = "30" className = {styles.usericon} priority = {true} />}
               <div className = {styles.markdownanswer}>
