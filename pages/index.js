@@ -7,6 +7,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Home() {
 
+  const suggestions = ["where is the bus schedule", "where can I find my course timetable", "How can I report a fault in my room to RV"];
   const [userInput, setUserInput] = useState("");
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -79,22 +80,21 @@ export default function Home() {
 
     
     let temp_counter = 0;
-    const reader = response.body.getReader(); //Binary text reader
-    const decoder = new TextDecoder("utf-8");
-    
+    // const reader = response.body.getReader(); //Binary text reader
+    // const decoder = new TextDecoder("utf-8");
+    const stream = response.body.pipeThrough(new TextDecoderStream());
+    const reader = stream.getReader();
     // Define a function to read and log the chunks
     async function readAndLogChunks() {
 
       const { value, done } = await reader.read();
-      const decodedChunk = decoder.decode(value);
+      // const decodedChunk = decoder.decode(value);
           if (done) {
-          temp_counter += 1
-          if (temp_counter === 1){
             console.log("The stream is finished!");
             reader.releaseLock();
             return;
-        }}
-        console.log(decodedChunk);
+      }
+        console.log(value);
 
         
 
@@ -106,13 +106,13 @@ export default function Home() {
           // Check if the last message is from the API
           if (newMessages[newMessages.length - 1].type === "apiMessage") {
             // Append the chunk to the last message
-            newMessages[newMessages.length - 1].message = decodedChunk;
+            newMessages[newMessages.length - 1].message = value;
             
             
           } else {
             // Create a new message with the chunk
             newMessages.push({
-              message: decodedChunk,
+              message: value,
               type: "apiMessage",
             });
           }
@@ -163,7 +163,7 @@ export default function Home() {
       </Head>
     <div className={styles.topnav}>
       <div className = {styles.navlogo}>
-        <a href="/" className = {styles.homebutton}><img src= "/utplogo.svg" width = "100"></img>UCSI</a>
+        <a href="/" className = {styles.homebutton}><img src= "/utplogo.svg" width = "100"></img></a>
       </div>
     <div className = {styles.navlinks}>
     <a href="https://ucs.utp.edu.my/knowledgebase/" target="_blank">Knowledge base</a>
