@@ -5,21 +5,85 @@ import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import CircularProgress from '@mui/material/CircularProgress';
 
+//import { getAnalytics } from "firebase/analytics";
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, set } from "firebase/database";
+import {v4 as uuidv4} from 'uuid';
+
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCftw32MjyzoVLsudf505b5SiQFX1-Qdtk",
+  authDomain: "utp-student-assistant.firebaseapp.com",
+  databaseURL:"https://utp-student-assistant-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "utp-student-assistant",
+  storageBucket: "utp-student-assistant.appspot.com",
+  messagingSenderId: "553686793637",
+  appId: "1:553686793637:web:07695af3baf1785a9fbc4c",
+  measurementId: "G-56STLQTXNE"
+};
+
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase();
+
+
 export default function Home() {
 
-  const suggestions = ["where is the bus schedule", "where can I find my course timetable", "How can I report a fault in my room to RV"];
+  const suggestions = ["where can i find available scholarships","where is the bus schedule", "where can I find my course timetable", "How can I report a fault in my room to RV"];
+  
+  const [instanceId, setInstanceId] = useState('');
   const [userInput, setUserInput] = useState("");
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
+  const messageListRef = useRef(null);
+  const textAreaRef = useRef(null);
+  const [selectedSuggestions, setSelectedSuggestions] = useState([]);
+  const [suggestionClicked, SetsuggestionClicked] = useState(false);
+  const [databaseUpdate,setDatabaseUpdate] = useState(false);
+
   const [messages, setMessages] = useState([
     {
       "message": "Hi there! How can I help?",
       "type": "apiMessage"
     }
   ]);
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth() + 1;
+  const currentYear = currentDate.getFullYear();
+  const currentDay = `${currentDate.getDate()}-${currentMonth}` ;
+  const currentHours = currentDate.getHours();
+  const currentMinutes = currentDate.getMinutes();
+  const hoursMinutes = `${currentHours}:${currentMinutes}`
+  
 
-  const messageListRef = useRef(null);
-  const textAreaRef = useRef(null);
+  const monthYear = `${currentMonth} - ${currentYear}`
+  const reference = ref(db, `${monthYear}/${currentDay}/${instanceId}`);
+
+
+
+
+  // Set Suggestion randomizer
+  function getRandomItems(array, n){
+    const shuffled = array.sort(() => 0.5 - Math.random());   //Fisher Yates Random sort algorithm for array
+    return shuffled.slice(0,n);
+  }
+
+  useEffect(() => {
+    const randomSelection = getRandomItems(suggestions, 2)
+    setSelectedSuggestions(randomSelection);
+  }, []);
+
+
+  // Set Instance ID
+  useEffect(() =>{
+    const randomId = uuidv4();
+    setInstanceId(randomId);
+  }, [])
+
+  
 
   // Auto scroll chat to bottom
   useEffect(() => {
@@ -44,14 +108,12 @@ export default function Home() {
     e.preventDefault(); // Handle form submission without triggering fullpage reload
 
     if (userInput.trim() === "") {
+      console.log("No input")
       return;
     }
 
-
     setMessages((prevMessages) => [...prevMessages, { "message": userInput, "type": "userMessage" }]);
-    
     messages.forEach((message, index) => {
-      // console.log(`Message ${index + 1}: ${message.message}, Type: ${message.type}`);
       console.log(`Loading: ${loading} Index ${index}: ${messages.length - 1}, Type: ${message.type}`);
     }); 
     console.log('user: ', userInput)
@@ -78,61 +140,60 @@ export default function Home() {
         return;
     }
 
-    
-    let temp_counter = 0;
-    // const reader = response.body.getReader(); //Binary text reader
-    // const decoder = new TextDecoder("utf-8");
     const stream = response.body.pipeThrough(new TextDecoderStream());
     const reader = stream.getReader();
-    // Define a function to read and log the chunks
+    
     async function readAndLogChunks() {
-
       const { value, done } = await reader.read();
-      // const decodedChunk = decoder.decode(value);
           if (done) {
             console.log("The stream is finished!");
             reader.releaseLock();
+            setDatabaseUpdate(true);
             return;
       }
-        console.log(value);
-
-        
-
-        // Update your messages state variable with the chunk
+        console.log(value);        
         setMessages((prevMessages) => {
-          // Get a copy of your previous messages
-          const newMessages = [...prevMessages];
-
+          const newMessages = [...prevMessages];     // Get a copy of your previous messages
           // Check if the last message is from the API
           if (newMessages[newMessages.length - 1].type === "apiMessage") {
-            // Append the chunk to the last message
-            newMessages[newMessages.length - 1].message = value;
-            
-            
-          } else {
+            newMessages[newMessages.length - 1].message = value;                  // Append the chunk to the last message           
+          } 
+          else {
             // Create a new message with the chunk
             newMessages.push({
               message: value,
               type: "apiMessage",
             });
           }
-          // console.log("newMessages returned")
-
           // Return the updated messages
           return newMessages;
         });
-
-
         // Recursively call the function to read the next chunk
         readAndLogChunks();
       }
-
       // Call the function to start reading and logging
       readAndLogChunks();
       };
       await fetchData()
       setLoading(false);
+      
+
+      
        
+  };
+
+  
+  useEffect(() => {       // Suggestion Clicked
+    console.log('Suggestion Clicked: ', userInput);
+    const syntheticEvent = {
+      preventDefault: () => {}, // Define a dummy preventDefault function
+    };
+    handleSubmit(syntheticEvent);
+  }, [suggestionClicked]);
+
+   const handleSuggestionClick = (suggestion) => {  
+    setUserInput(suggestion);
+    SetsuggestionClicked(true);
   };
 
   // Prevent blank submissions and allow for multiline input
@@ -150,8 +211,21 @@ export default function Home() {
   useEffect(() => {
     if (messages.length >= 3) {
       setHistory([[messages[messages.length - 2].message, messages[messages.length - 1].message]]);
-    }
-    }, [messages])
+  }}, [messages])
+
+  useEffect(() => {
+    if (messages.length >= 3) {
+    set(reference,{
+      time: hoursMinutes,
+      messages: messages
+    });
+    setDatabaseUpdate(false)
+    console.log("Database updated")
+  }}, [databaseUpdate]);
+
+  
+
+
 
   return (
     <>
@@ -187,8 +261,18 @@ export default function Home() {
           )
         })}
         </div>
-            </div>
+        </div>
            <div className={styles.center}>
+
+            {/* Display Sugestions */}
+            {messages.length < 2 && (
+              <div className ={styles.suggestionsTab}>
+                {selectedSuggestions.map((suggestion, index) => (
+                  <div key={index} className={styles.suggestion} onClick={() => handleSuggestionClick(suggestion)}>
+                    {suggestion}</div>
+                  ))}
+              </div>
+              )}
             
             <div className = {styles.cloudform}>
            <form onSubmit = {handleSubmit}>
@@ -225,8 +309,6 @@ export default function Home() {
             {/* <p id="print"></p> */}
             </div>
         </div>
-        <script src="https://cdn.botpress.cloud/webchat/v0/inject.js"></script>
-        <script src="https://mediafiles.botpress.cloud/5508ca1c-dee1-4ef2-8108-994b7160349c/webchat/config.js" defer></script>
       </main>
     </>
   )

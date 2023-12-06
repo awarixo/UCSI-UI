@@ -31,4 +31,6 @@ yarn-error.log*
 # vercel
 .vercel
 
-/pages/index_stream.js
+/pages/first_index.js
+/pages/socket_index.js
+/pages/suggestions.js
