@@ -23,7 +23,8 @@
   align-items: center;
 }
 
-.navlogo, .navlinks a {
+.navlogo,
+.navlinks a {
   font-weight: 500;
 }
 
@@ -33,7 +34,7 @@
   margin-left: 1rem;
 }
 
-.homebutton{
+.homebutton {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -66,7 +67,7 @@
   position: relative;
 }
 
-.suggestion{
+.suggestion {
   flex: 1;
   position: relative;
   resize: none;
@@ -88,7 +89,7 @@
   border-radius: 0.5rem;
   border: 1px solid #30373d;
   background: #070809;
-  color: #ECECF1;
+  color: #ececf1;
   outline: none;
 }
 
@@ -152,12 +153,12 @@
 .usermessage {
   background: #070809;
   padding: 1.5rem;
-  color: #ECECF1;
+  color: #ececf1;
 }
 
-.usermessagewaiting{
+.usermessagewaiting {
   padding: 1.5rem;
-  color: #ECECF1;
+  color: #ececf1;
   background: linear-gradient(to left, #070809, #1a1c20, #070809);
   background-size: 200% 200%;
   background-position: -100% 0;
@@ -178,16 +179,22 @@
 .apimessage {
   background: #141619;
   padding: 1.5rem;
-  color: #ECECF1;
+  color: #ececf1;
   animation: fadein 0.5s;
 }
 
 @keyframes fadein {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.apimessage, .usermessage, .usermessagewaiting {
+.apimessage,
+.usermessage,
+.usermessagewaiting {
   display: flex;
 }
 
@@ -210,19 +217,22 @@
   white-space: pre-wrap !important;
 }
 
-.markdownanswer ol, .markdownanswer ul {
+.markdownanswer ol,
+.markdownanswer ul {
   margin: 1rem;
 }
 
-.boticon, .usericon {
+.boticon,
+.usericon {
   margin-right: 1rem;
   border-radius: 0.1rem;
 }
 
-.markdownanswer h1, .markdownanswer h2, .markdownanswer h3 {
+.markdownanswer h1,
+.markdownanswer h2,
+.markdownanswer h3 {
   font-size: inherit;
 }
-
 
 .center {
   display: flex;
@@ -233,7 +243,7 @@
   flex-direction: column;
 }
 
-.suggestionsTab{
+.suggestionsTab {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -241,7 +251,38 @@
   width: 75vw;
   flex-direction: row;
 }
+@media screen and (max-width: 600px) {
+  .suggestionsTab {
+    display: block;
+    width: 90vw;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
 
+  .suggestionsTab > * {
+    margin-bottom: 10px;
+  }
+}
+
+@media screen and (min-width: 601px) and (max-width: 1024px) {
+  .suggestionsTab {
+    display: block;
+    width: 75vw;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .suggestionsTab > * {
+    margin-bottom: 10px;
+  }
+}
+
+@media screen and (min-width: 1025px) {
+  .suggestionsTab > * {
+    margin-bottom: 10px;
+    margin-right: 10px;
+  }
+}
 .cloud {
   width: 75vw;
   height: 65vh;
@@ -252,13 +293,33 @@
   justify-content: center;
   align-items: center;
 }
-.suggestionButton{
+.suggestionButton {
   background: none;
   border: none;
   border-color: none;
   padding: 0;
   font: inherit;
 }
+
+.satisfaction{
+  position: relative;
+  resize: none;
+  font-size: 0.9rem;
+  padding: .5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #30373d;
+  background: #070809;
+  color: #ffffff;
+}
+.surveyButtons{
+  font-size: 0.9rem;
+  padding: .5rem 1rem;
+  border-radius: 0.5rem;
+  flex: 1;
+  /* display: flex; */
+  justify-content: center;
+}
+
 
 .pointsnormal {
   width: 90%;
@@ -288,7 +349,6 @@
 
 /* Mobile optimization */
 @media (max-width: 600px) {
-
   .main {
     padding: 1rem;
     max-height: 90vh;
@@ -307,18 +367,18 @@
     padding: 0.85rem 0.75rem 0.85rem 0.75rem;
   }
 
-.navlogo {
-  font-size: 1.25rem;
-  width: 20rem;
-}
+  .navlogo {
+    font-size: 1.25rem;
+    width: 20rem;
+  }
 
-.markdownanswer code {
-  white-space : pre-wrap !important;
-}
+  .markdownanswer code {
+    white-space: pre-wrap !important;
+  }
 
-.footer {
-  font-size: 0.7rem;
-  width: 100%;
-  text-align: center;
-}
+  .footer {
+    font-size: 0.7rem;
+    width: 100%;
+    text-align: center;
+  }
 }
